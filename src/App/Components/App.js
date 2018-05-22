@@ -19,7 +19,22 @@ function Switch({on, className = '', ...props}) {
     )
 }
 
+function ToggleOn({on, children}) {
+    return on ? children : null
+}
+function ToggleOff({on, children}) {
+    return on ? null : children
+}
+function ToggleButton({on, toggle, ...props}) {
+    return (
+        <Switch on={on} onClick={toggle} {...props} />
+    )
+}
+
 class Toggle extends React.Component {
+    static On = ToggleOn
+    static Off = ToggleOff
+    static Button = ToggleButton
     static defaultProps = {onToggle: () => {}}
     state = {on: false}
     toggle = () =>
@@ -30,9 +45,15 @@ class Toggle extends React.Component {
             },
         )
     render() {
-        const {on} = this.state
+        const children = React.Children.map(
+            this.props.children,
+            child => React.cloneElement(child, {
+                on: this.state.on,
+                toggle: this.toggle,
+            })
+        )
         return (
-            <Switch on={on} onClick={this.toggle} />
+            <div>{children}</div>
         )
     }
 }
@@ -47,7 +68,11 @@ const App = () => (
     }}>
         <Toggle
             onToggle={on => console.log('toggle', on)}
-        />
+        >
+            <Toggle.On>The button is on</Toggle.On>
+            <Toggle.Off>The button is off</Toggle.Off>
+            <Toggle.Button />
+        </Toggle>
     </div>
 )
 
