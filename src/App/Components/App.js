@@ -49,6 +49,31 @@ ToggleButton.contextTypes = {
     [TOGGLE_CONTEXT]: PropTypes.object.isRequired,
 }
 
+/* ---------------------------------------------------- */
+
+function withToggle(Component) {
+    function Wrapper(props, context) {
+        const toggleContext = context[TOGGLE_CONTEXT]
+        return (
+            <Component {...toggleContext} {...props} />
+        )
+    }
+    Wrapper.contextTypes = {
+        [TOGGLE_CONTEXT]: PropTypes.object.isRequired,
+    }
+    return Wrapper
+}
+
+const MyToggle = withToggle(({on, toggle}) => (
+    <div>
+        <button onClick={toggle}>
+            {on ? 'on' : 'off'}
+        </button>
+    </div>
+))
+
+/* ---------------------------------------------------- */
+
 class Toggle extends React.Component {
     static On = ToggleOn
     static Off = ToggleOff
@@ -93,6 +118,8 @@ const App = () => (
         >
             <Toggle.On>The button is on</Toggle.On>
             <Toggle.Button />
+            <hr />
+            <MyToggle />
             <Toggle.Off>The button is off</Toggle.Off>
         </Toggle>
     </div>
